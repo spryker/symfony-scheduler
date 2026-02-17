@@ -1,0 +1,6 @@
+{
+    "include": {
+        "dragonmantank/cron-expression": "Required for parsing cron expressions and determining the next run time of scheduled tasks.",
+        "symfony/scheduler": "Provides the core functionality for scheduling and executing tasks based on cron expressions."
+    }
+}
