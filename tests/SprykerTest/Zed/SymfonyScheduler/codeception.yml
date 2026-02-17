@@ -1,15 +1,15 @@
 namespace: SprykerTest\Zed\SymfonyScheduler
 
 paths:
-  tests: .
-  data: ../../../_data
-  support: _support
-  output: ../../../_output
+    tests: .
+    data: ../../../_data
+    support: _support
+    output: ../../../_output
 
 coverage:
-  enabled: true
-  remote: false
-  whitelist: { include: ['../../../../src/*'] }
+    enabled: true
+    remote: false
+    whitelist: { include: ['../../../../src/*'] }
 
 suites:
     Business:
