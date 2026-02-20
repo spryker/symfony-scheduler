@@ -3,7 +3,7 @@ parameters:
     paths:
         - src/
     excludePaths:
-        - tests/
+        - tests/ (?)
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - '#Method .+\\SchedulerTransportFactoryProviderPlugin::getTransportFactories\(\) return type with generic interface Symfony\\Component\\Messenger\\Transport\\TransportFactoryInterface does not specify its types: TTransport#'
