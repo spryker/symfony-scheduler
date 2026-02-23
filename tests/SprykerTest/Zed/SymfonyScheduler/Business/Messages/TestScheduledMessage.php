@@ -13,4 +13,9 @@ class TestScheduledMessage
      * @var string
      */
     public string $data = 'test data';
+
+    public function getCommand(): string
+    {
+        return 'test:command';
+    }
 }

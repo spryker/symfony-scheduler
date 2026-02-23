@@ -14,9 +14,8 @@ class SchedulerRunner implements SchedulerRunnerInterface
 {
     protected Scheduler $scheduler;
 
-    public function __construct(
-        SchedulerBuilderInterface $schedulerBuilder,
-    ) {
+    public function __construct(SchedulerBuilderInterface $schedulerBuilder)
+    {
         $this->scheduler = $schedulerBuilder->build();
     }
 

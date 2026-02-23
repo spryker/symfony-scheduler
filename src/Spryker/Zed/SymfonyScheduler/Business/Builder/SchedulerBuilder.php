@@ -28,7 +28,7 @@ class SchedulerBuilder implements SchedulerBuilderInterface
 
         foreach ($this->schedulerHandlerProviderPlugins as $plugin) {
             $handlers = array_merge($handlers, $plugin->getHandlers());
-            $schedules[] = array_merge($schedules, $plugin->getSchedules());
+            $schedules = array_merge($schedules, $plugin->getSchedules());
         }
 
         return new Scheduler($handlers, $schedules);
