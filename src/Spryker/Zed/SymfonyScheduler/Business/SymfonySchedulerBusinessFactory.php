@@ -31,9 +31,6 @@ class SymfonySchedulerBusinessFactory extends AbstractBusinessFactory
         );
     }
 
-    /**
-     * @return \Spryker\Zed\SymfonyScheduler\Business\Builder\SchedulerBuilderInterface
-     */
     public function createSchedulerBuilder(): SchedulerBuilderInterface
     {
         return new SchedulerBuilder(
