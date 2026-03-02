@@ -26,9 +26,6 @@ use Symfony\Component\Scheduler\Messenger\SchedulerTransportFactory;
  */
 class SymfonySchedulerCommunicationFactory extends AbstractCommunicationFactory
 {
-    /**
-     * @return \Symfony\Component\Messenger\Transport\TransportFactoryInterface
-     */
     public function createSchedulerTransportFactory(): TransportFactoryInterface
     {
         return new SchedulerTransportFactory($this->createScheduleContainerBuilder()->build());

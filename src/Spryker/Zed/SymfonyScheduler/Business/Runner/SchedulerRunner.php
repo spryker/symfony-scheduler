@@ -19,9 +19,6 @@ class SchedulerRunner implements SchedulerRunnerInterface
         $this->scheduler = $schedulerBuilder->build();
     }
 
-    /**
-     * @return void
-     */
     public function runScheduledTasks(): void
     {
         $this->scheduler->run();

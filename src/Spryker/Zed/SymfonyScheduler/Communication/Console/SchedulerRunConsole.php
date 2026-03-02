@@ -28,9 +28,6 @@ class SchedulerRunConsole extends Console
      */
     public const COMMAND_DESCRIPTION = 'Runs scheduled tasks that are due for execution.';
 
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         parent::configure();
@@ -40,12 +37,6 @@ class SchedulerRunConsole extends Console
             ->setDescription(static::COMMAND_DESCRIPTION);
     }
 
-    /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
-     *
-     * @return int
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('<info>Running scheduled tasks...</info>');

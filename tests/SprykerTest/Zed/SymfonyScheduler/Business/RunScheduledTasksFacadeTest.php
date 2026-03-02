@@ -38,9 +38,6 @@ class RunScheduledTasksFacadeTest extends Unit
      */
     protected SymfonySchedulerBusinessTester $tester;
 
-    /**
-     * @return void
-     */
     public function testRunScheduledTasksExecutesSchedulerRun(): void
     {
         $this->markTestSkipped('This test will be refactored with the next Scheduler version, as the current implementation has side effects');

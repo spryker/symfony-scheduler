@@ -16,11 +16,6 @@ class SymfonySchedulerDependencyProvider extends AbstractBundleDependencyProvide
 
     public const string FACADE_LOCK = 'FACADE_LOCK';
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     public function provideBusinessLayerDependencies(Container $container): Container
     {
         $container = parent::provideBusinessLayerDependencies($container);
@@ -29,11 +24,6 @@ class SymfonySchedulerDependencyProvider extends AbstractBundleDependencyProvide
         return $container;
     }
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     public function provideCommunicationLayerDependencies(Container $container): Container
     {
         $container = parent::provideCommunicationLayerDependencies($container);
@@ -43,11 +33,6 @@ class SymfonySchedulerDependencyProvider extends AbstractBundleDependencyProvide
         return $container;
     }
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     protected function addSchedulerHandlerProviderPlugins(Container $container): Container
     {
         $container->set(static::PLUGINS_SCHEDULER_HANDLER_PROVIDER, function () {

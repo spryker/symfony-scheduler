@@ -18,9 +18,6 @@ class SchedulerBuilder implements SchedulerBuilderInterface
     {
     }
 
-    /**
-     * @return \Symfony\Component\Scheduler\Scheduler
-     */
     public function build(): Scheduler
     {
         $handlers = [];

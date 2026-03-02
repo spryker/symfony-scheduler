@@ -77,11 +77,6 @@ class ScheduleReader implements ScheduleReaderInterface
         return $taskInfo;
     }
 
-    /**
-     * @param object $trigger
-     *
-     * @return string
-     */
     protected function getTriggerType(object $trigger): string
     {
         if ($trigger instanceof CronExpressionTrigger) {
@@ -95,11 +90,6 @@ class ScheduleReader implements ScheduleReaderInterface
         return str_replace('Trigger', '', $shortName);
     }
 
-    /**
-     * @param object $trigger
-     *
-     * @return string
-     */
     protected function getScheduleExpression(object $trigger): string
     {
         // Use reflection to get the cron expression
@@ -110,11 +100,6 @@ class ScheduleReader implements ScheduleReaderInterface
         return (string)$expressionProperty->getValue($trigger);
     }
 
-    /**
-     * @param object $message
-     *
-     * @return string
-     */
     protected function extractCommand(object $message): string
     {
         // Try to extract command from message

@@ -21,9 +21,6 @@ use Spryker\Zed\SymfonyScheduler\SymfonySchedulerDependencyProvider;
  */
 class SymfonySchedulerBusinessFactory extends AbstractBusinessFactory
 {
-    /**
-     * @return \Spryker\Zed\SymfonyScheduler\Business\Runner\SchedulerRunnerInterface
-     */
     public function createSchedulerRunner(): SchedulerRunnerInterface
     {
         return new SchedulerRunner(
@@ -38,9 +35,6 @@ class SymfonySchedulerBusinessFactory extends AbstractBusinessFactory
         );
     }
 
-    /**
-     * @return \Spryker\Zed\SymfonyScheduler\Business\Reader\ScheduleReaderInterface
-     */
     public function createScheduleReader(): ScheduleReaderInterface
     {
         return new ScheduleReader(
