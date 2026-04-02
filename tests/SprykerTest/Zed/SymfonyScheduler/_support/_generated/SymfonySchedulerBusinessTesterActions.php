@@ -79,9 +79,7 @@ trait SymfonySchedulerBusinessTesterActions
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * @param string|null $moduleName
      *
-     * @return \Spryker\Shared\Kernel\AbstractBundleConfig
      * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::getModuleConfig()
      */
     public function getModuleConfig(?string $moduleName = NULL): \Spryker\Shared\Kernel\AbstractBundleConfig {
@@ -92,9 +90,7 @@ trait SymfonySchedulerBusinessTesterActions
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * @param string|null $moduleName
      *
-     * @return \Spryker\Shared\Kernel\AbstractSharedConfig|null
      * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::getSharedModuleConfig()
      */
     public function getSharedModuleConfig(?string $moduleName = NULL): ?\Spryker\Shared\Kernel\AbstractSharedConfig {
@@ -105,9 +101,7 @@ trait SymfonySchedulerBusinessTesterActions
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * @param string $moduleName
      *
-     * @return bool
      * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::configExists()
      */
     public function configExists(string $moduleName): bool {
@@ -118,9 +112,7 @@ trait SymfonySchedulerBusinessTesterActions
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * @param string $key
      *
-     * @return void
      * @see \SprykerTest\Shared\Testify\Helper\ConfigHelper::removeConfig()
      */
     public function removeConfig(string $key): void {
@@ -151,7 +143,7 @@ trait SymfonySchedulerBusinessTesterActions
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * @return bool
+     *
      * @see \SprykerTest\Shared\Testify\Helper\LocatorHelper::isProjectNamespaceEnabled()
      */
     public function isProjectNamespaceEnabled(): bool {
@@ -186,7 +178,7 @@ trait SymfonySchedulerBusinessTesterActions
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * @return void
+     *
      * @see \SprykerTest\Shared\Testify\Helper\DependencyHelper::clearFactoryContainerCache()
      */
     public function clearFactoryContainerCache(): void {
@@ -212,9 +204,7 @@ trait SymfonySchedulerBusinessTesterActions
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * @param \Closure $closure
      *
-     * @return void
      * @see \SprykerTest\Shared\Testify\Helper\DataCleanupHelper::addCleanup()
      */
     public function addCleanup(\Closure $closure): void {
