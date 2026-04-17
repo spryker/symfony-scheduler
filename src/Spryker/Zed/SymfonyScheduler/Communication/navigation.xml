@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<config>
+    <maintenance>
+        <pages>
+            <symfony-scheduler>
+                <label>Scheduler</label>
+                <title>Scheduler</title>
+                <bundle>symfony-scheduler</bundle>
+                <controller>index</controller>
+                <action>index</action>
+                <icon>schedule</icon>
+            </symfony-scheduler>
+        </pages>
+    </maintenance>
+</config>
