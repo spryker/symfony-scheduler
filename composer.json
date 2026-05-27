@@ -18,6 +18,9 @@
         "spryker/code-sniffer": "*",
         "spryker/testify": "*"
     },
+    "suggest": {
+        "ext-pcntl": "If you want to shutdown subprocesses on signal"
+    },
     "autoload": {
         "psr-4": {
             "Spryker\\": "src/Spryker/"

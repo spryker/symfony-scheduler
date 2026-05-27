@@ -8,5 +8,7 @@ parameters:
     ignoreErrors:
         - '#Method .+\\SchedulerTransportFactoryProviderPlugin::getTransportFactories\(\) return type with generic interface Symfony\\Component\\Messenger\\Transport\\TransportFactoryInterface does not specify its types: TTransport#'
         - '#Method .+\\SymfonySchedulerCommunicationFactory::createSchedulerTransportFactory\(\) return type with generic interface Symfony\\Component\\Messenger\\Transport\\TransportFactoryInterface does not specify its types: TTransport#'
+        - '#Callable callable\(\): mixed invoked with 1 parameter, 0 required#'
+        - '#Parameter \#2 \$handler of function pcntl_signal expects \(callable\(\): mixed\)\|int, \(callable\(\): mixed\)\|int\|string given#'
 
 
