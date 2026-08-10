@@ -7,28 +7,26 @@
 {% block content %}
     {% embed '@Gui/Partials/widget.twig' with { widget_title: widget_title | trans } %}
         {% block widget_content %}
-            <table class="table table-striped table-bordered table-hover gui-table-data">
-                <thead>
-                    <tr>
-                        <th>{{ 'Name' | trans }}</th>
-                        <th>{{ 'Command' | trans }}</th>
-                        <th>{{ 'Schedule' | trans }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for task in tasks %}
-                        <tr>
-                            <td>{{ task.name }}</td>
-                            <td>{{ task.command }}</td>
-                            <td>{{ task.schedule }}</td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="3">{{ 'No scheduled tasks configured.' | trans }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {{ table | raw }}
         {% endblock %}
     {% endembed %}
+
+    <script>
+        (function () {
+            var TABLE_ID = 'scheduler-job-table';
+            var REFRESH_INTERVAL_MS = 5000;
+
+            // Reload the table data in place so the job statuses stay live without a page reload.
+            setInterval(function () {
+                if (typeof $ === 'undefined' || !$.fn.dataTable) {
+                    return;
+                }
+
+                var $table = $('#' + TABLE_ID);
+                if ($table.length && $.fn.dataTable.isDataTable($table)) {
+                    $table.DataTable().ajax.reload(null, false);
+                }
+            }, REFRESH_INTERVAL_MS);
+        })();
+    </script>
 {% endblock %}

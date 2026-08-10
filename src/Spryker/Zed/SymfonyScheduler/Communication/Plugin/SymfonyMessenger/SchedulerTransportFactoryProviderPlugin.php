@@ -7,29 +7,11 @@
 
 namespace Spryker\Zed\SymfonyScheduler\Communication\Plugin\SymfonyMessenger;
 
-use Spryker\Shared\SymfonyMessengerExtension\Dependency\Plugin\TransportFactoryProviderPluginInterface;
-use Spryker\Zed\Kernel\Communication\AbstractPlugin;
+use Spryker\Client\SymfonyScheduler\Plugin\SymfonyMessenger\SchedulerTransportFactoryProviderPlugin as ClientSchedulerTransportFactoryProviderPlugin;
 
 /**
- * @method \Spryker\Zed\SymfonyScheduler\Communication\SymfonySchedulerCommunicationFactory getFactory()
- * @method \Spryker\Zed\SymfonyScheduler\Business\SymfonySchedulerFacadeInterface getFacade()
- * @method \Spryker\Zed\SymfonyScheduler\SymfonySchedulerConfig getConfig()
- * @method \Spryker\Zed\SymfonyScheduler\Business\SymfonySchedulerBusinessFactory getBusinessFactory()
+ * @deprecated Use {@link \Spryker\Client\SymfonyScheduler\Plugin\SymfonyMessenger\SchedulerTransportFactoryProviderPlugin} instead.
  */
-class SchedulerTransportFactoryProviderPlugin extends AbstractPlugin implements TransportFactoryProviderPluginInterface
+class SchedulerTransportFactoryProviderPlugin extends ClientSchedulerTransportFactoryProviderPlugin
 {
-    /**
-     * {@inheritDoc}
-     * - Returns SchedulerTransportFactory instance to be used by Symfony Messenger.
-     *
-     * @api
-     *
-     * @return array<\Symfony\Component\Messenger\Transport\TransportFactoryInterface>
-     */
-    public function getTransportFactories(): array
-    {
-        return [
-            $this->getFactory()->createSchedulerTransportFactory(),
-        ];
-    }
 }

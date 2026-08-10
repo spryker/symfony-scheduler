@@ -7,44 +7,11 @@
 
 namespace Spryker\Zed\SymfonyScheduler\Communication\Plugin\SymfonyScheduler;
 
-use Spryker\Shared\SymfonySchedulerExtension\Dependency\Plugin\SchedulerHandlerProviderPluginInterface;
-use Spryker\Zed\Kernel\Communication\AbstractPlugin;
-use Spryker\Zed\SymfonyScheduler\Communication\Messages\CommandMessageInterface;
+use Spryker\Client\SymfonyScheduler\Plugin\SymfonyScheduler\CompiledCronTransportsHandlerProviderPlugin as ClientCompiledCronTransportsHandlerProviderPlugin;
 
 /**
- * @method \Spryker\Zed\SymfonyScheduler\Communication\SymfonySchedulerCommunicationFactory getFactory()
- * @method \Spryker\Zed\SymfonyScheduler\Business\SymfonySchedulerFacadeInterface getFacade()
- * @method \Spryker\Zed\SymfonyScheduler\Business\SymfonySchedulerBusinessFactory getBusinessFactory()
+ * @deprecated Use {@link \Spryker\Client\SymfonyScheduler\Plugin\SymfonyScheduler\CompiledCronTransportsHandlerProviderPlugin} instead.
  */
-class CompiledCronTransportsHandlerProviderPlugin extends AbstractPlugin implements SchedulerHandlerProviderPluginInterface
+class CompiledCronTransportsHandlerProviderPlugin extends ClientCompiledCronTransportsHandlerProviderPlugin
 {
-    /**
-     * {@inheritDoc}
-     *
-     * @api
-     *
-     * @return array<string, array<callable>>
-     */
-    public function getHandlers(): array
-    {
-        return [
-            CommandMessageInterface::class => [
-                $this->getFactory()->createCommandHandler(),
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @api
-     *
-     * @return array<string, \Symfony\Component\Scheduler\Schedule>
-     */
-    public function getSchedules(): array
-    {
-        $builder = $this->getFactory()->createSchedulerCronJobsBuilder();
-
-        return $builder->buildSchedule();
-    }
 }

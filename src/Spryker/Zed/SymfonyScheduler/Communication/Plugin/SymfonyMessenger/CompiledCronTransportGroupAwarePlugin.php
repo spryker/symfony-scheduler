@@ -7,31 +7,11 @@
 
 namespace Spryker\Zed\SymfonyScheduler\Communication\Plugin\SymfonyMessenger;
 
-use Spryker\Shared\SymfonyMessengerExtension\Dependency\Plugin\GroupAwareTransportsPluginInterface;
-use Spryker\Zed\Kernel\Communication\AbstractPlugin;
+use Spryker\Client\SymfonyScheduler\Plugin\SymfonyMessenger\CompiledCronTransportGroupAwarePlugin as ClientCompiledCronTransportGroupAwarePlugin;
 
 /**
- * @method \Spryker\Zed\SymfonyScheduler\Communication\SymfonySchedulerCommunicationFactory getFactory()
- * @method \Spryker\Zed\SymfonyScheduler\Business\SymfonySchedulerFacadeInterface getFacade()
- * @method \Spryker\Zed\SymfonyScheduler\Business\SymfonySchedulerBusinessFactory getBusinessFactory()
+ * @deprecated Use {@link \Spryker\Client\SymfonyScheduler\Plugin\SymfonyMessenger\CompiledCronTransportGroupAwarePlugin} instead.
  */
-class CompiledCronTransportGroupAwarePlugin extends AbstractPlugin implements GroupAwareTransportsPluginInterface
+class CompiledCronTransportGroupAwarePlugin extends ClientCompiledCronTransportGroupAwarePlugin
 {
-    protected const string GROUP_KEY = 'compiled-cron-scheduler';
-
-    /**
-     * {@inheritDoc}
-     *
-     * @api
-     *
-     * @return array<string, array<string>>
-     */
-    public function getGroupMapping(): array
-    {
-        $builder = $this->getFactory()->createSchedulerCronJobsBuilder();
-
-        return [
-            static::GROUP_KEY => array_keys($builder->buildSchedule()),
-        ];
-    }
 }

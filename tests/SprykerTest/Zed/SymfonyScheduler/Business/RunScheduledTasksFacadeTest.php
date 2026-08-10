@@ -40,6 +40,9 @@ class RunScheduledTasksFacadeTest extends Unit
 
     public function testRunScheduledTasksExecutesSchedulerRun(): void
     {
+        // Arrange
+        // Act
+        // Assert
         $this->markTestSkipped('This test will be refactored with the next Scheduler version, as the current implementation has side effects');
     }
 }

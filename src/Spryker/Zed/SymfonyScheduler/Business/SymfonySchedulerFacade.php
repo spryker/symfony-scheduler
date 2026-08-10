@@ -39,7 +39,7 @@ class SymfonySchedulerFacade extends AbstractFacade implements SymfonySchedulerF
     public function getScheduledTasks(): array
     {
         return $this->getFactory()
-            ->createScheduleReader()
+            ->getSymfonySchedulerClient()
             ->getScheduledTasks();
     }
 }

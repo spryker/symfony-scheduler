@@ -7,11 +7,10 @@
 
 namespace Spryker\Zed\SymfonyScheduler\Business;
 
+use Spryker\Client\SymfonyScheduler\SymfonySchedulerClientInterface;
 use Spryker\Zed\Kernel\Business\AbstractBusinessFactory;
 use Spryker\Zed\SymfonyScheduler\Business\Builder\SchedulerBuilder;
 use Spryker\Zed\SymfonyScheduler\Business\Builder\SchedulerBuilderInterface;
-use Spryker\Zed\SymfonyScheduler\Business\Reader\ScheduleReader;
-use Spryker\Zed\SymfonyScheduler\Business\Reader\ScheduleReaderInterface;
 use Spryker\Zed\SymfonyScheduler\Business\Runner\SchedulerRunner;
 use Spryker\Zed\SymfonyScheduler\Business\Runner\SchedulerRunnerInterface;
 use Spryker\Zed\SymfonyScheduler\SymfonySchedulerDependencyProvider;
@@ -35,18 +34,16 @@ class SymfonySchedulerBusinessFactory extends AbstractBusinessFactory
         );
     }
 
-    public function createScheduleReader(): ScheduleReaderInterface
-    {
-        return new ScheduleReader(
-            $this->getSchedulerHandlerProviderPlugins(),
-        );
-    }
-
     /**
      * @return array<\Spryker\Shared\SymfonySchedulerExtension\Dependency\Plugin\SchedulerHandlerProviderPluginInterface>
      */
     public function getSchedulerHandlerProviderPlugins(): array
     {
         return $this->getProvidedDependency(SymfonySchedulerDependencyProvider::PLUGINS_SCHEDULER_HANDLER_PROVIDER);
+    }
+
+    public function getSymfonySchedulerClient(): SymfonySchedulerClientInterface
+    {
+        return $this->getProvidedDependency(SymfonySchedulerDependencyProvider::CLIENT_SYMFONY_SCHEDULER);
     }
 }

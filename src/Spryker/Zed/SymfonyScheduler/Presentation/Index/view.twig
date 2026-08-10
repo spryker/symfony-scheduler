@@ -1,0 +1,59 @@
+{% extends '@Gui/Layout/layout.twig' %}
+
+{% set widget_title = 'Scheduled Task Status' %}
+
+{% block head_title widget_title | trans %}
+
+{% set status_label_classes = {
+    'Running': 'label-info',
+    'Success': 'label-primary',
+    'Error': 'label-danger',
+    'Waiting': 'label-warning',
+} %}
+
+{% block section_title widget_title | trans %}
+
+{% block action %}
+    {{ backActionButton('/symfony-scheduler', 'Back to Scheduled Tasks' | trans) }}
+{% endblock %}
+
+{% block content %}
+    {% embed '@Gui/Partials/widget.twig' with { widget_title: schedulerJobStatus.name } %}
+        {% block widget_content %}
+            <table class="table table-striped table-bordered">
+                <tbody>
+                    <tr>
+                        <th>{{ 'Name' | trans }}</th>
+                        <td>{{ schedulerJobStatus.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'Command' | trans }}</th>
+                        <td>{{ schedulerJobStatus.command }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'Status' | trans }}</th>
+                        <td>
+                            <span class="label {{ status_label_classes[schedulerJobStatus.status] | default('label-default') }}">
+                                {{ schedulerJobStatus.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'Started' | trans }}</th>
+                        <td>{{ schedulerJobStatus.startedAt | default('-') }}</td>
+                    </tr>
+                    <tr>
+                        <th>{{ 'Finished' | trans }}</th>
+                        <td>{{ schedulerJobStatus.finishedAt | default('-') }}</td>
+                    </tr>
+                    {% if schedulerJobStatus.errorMessage %}
+                        <tr>
+                            <th>{{ 'Error' | trans }}</th>
+                            <td><pre class="text-danger">{{ schedulerJobStatus.errorMessage }}</pre></td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

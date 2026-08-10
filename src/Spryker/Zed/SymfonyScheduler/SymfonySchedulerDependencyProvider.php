@@ -14,12 +14,13 @@ class SymfonySchedulerDependencyProvider extends AbstractBundleDependencyProvide
 {
     public const string PLUGINS_SCHEDULER_HANDLER_PROVIDER = 'PLUGINS_SCHEDULER_HANDLER_PROVIDER';
 
-    public const string FACADE_LOCK = 'FACADE_LOCK';
+    public const string CLIENT_SYMFONY_SCHEDULER = 'CLIENT_SYMFONY_SCHEDULER';
 
     public function provideBusinessLayerDependencies(Container $container): Container
     {
         $container = parent::provideBusinessLayerDependencies($container);
         $container = $this->addSchedulerHandlerProviderPlugins($container);
+        $container = $this->addSymfonySchedulerClient($container);
 
         return $container;
     }
@@ -27,8 +28,7 @@ class SymfonySchedulerDependencyProvider extends AbstractBundleDependencyProvide
     public function provideCommunicationLayerDependencies(Container $container): Container
     {
         $container = parent::provideCommunicationLayerDependencies($container);
-        $container = $this->addSchedulerHandlerProviderPlugins($container);
-        $container = $this->addLockFacade($container);
+        $container = $this->addSymfonySchedulerClient($container);
 
         return $container;
     }
@@ -50,10 +50,10 @@ class SymfonySchedulerDependencyProvider extends AbstractBundleDependencyProvide
         return [];
     }
 
-    protected function addLockFacade(Container $container): Container
+    protected function addSymfonySchedulerClient(Container $container): Container
     {
-        $container->set(static::FACADE_LOCK, function (Container $container) {
-            return $container->getLocator()->lock()->facade();
+        $container->set(static::CLIENT_SYMFONY_SCHEDULER, function (Container $container) {
+            return $container->getLocator()->symfonyScheduler()->client();
         });
 
         return $container;

@@ -7,18 +7,12 @@
 
 namespace Spryker\Zed\SymfonyScheduler\Communication;
 
+use Spryker\Client\SymfonyScheduler\SymfonySchedulerClientInterface;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
-use Spryker\Zed\Lock\Business\LockFacadeInterface;
-use Spryker\Zed\SymfonyScheduler\Communication\Builder\ConfigBasedCronJobsBuilder;
-use Spryker\Zed\SymfonyScheduler\Communication\Builder\CronJobsBuilderInterface;
-use Spryker\Zed\SymfonyScheduler\Communication\Builder\ScheduleContainerBuilder;
-use Spryker\Zed\SymfonyScheduler\Communication\Builder\ScheduleContainerBuilderInterface;
-use Spryker\Zed\SymfonyScheduler\Communication\MessageHandlers\CommandHandler;
-use Spryker\Zed\SymfonyScheduler\Communication\Messages\CommandMessage;
-use Spryker\Zed\SymfonyScheduler\Communication\Messages\CommandMessageInterface;
+use Spryker\Zed\SymfonyScheduler\Communication\Form\ToggleSchedulerJobForm;
+use Spryker\Zed\SymfonyScheduler\Communication\Table\SchedulerJobTable;
 use Spryker\Zed\SymfonyScheduler\SymfonySchedulerDependencyProvider;
-use Symfony\Component\Messenger\Transport\TransportFactoryInterface;
-use Symfony\Component\Scheduler\Messenger\SchedulerTransportFactory;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * @method \Spryker\Zed\SymfonyScheduler\SymfonySchedulerConfig getConfig()
@@ -26,41 +20,21 @@ use Symfony\Component\Scheduler\Messenger\SchedulerTransportFactory;
  */
 class SymfonySchedulerCommunicationFactory extends AbstractCommunicationFactory
 {
-    public function createSchedulerTransportFactory(): TransportFactoryInterface
+    public function createSchedulerJobTable(): SchedulerJobTable
     {
-        return new SchedulerTransportFactory($this->createScheduleContainerBuilder()->build());
+        return new SchedulerJobTable(
+            $this->getSymfonySchedulerClient(),
+            $this->getConfig(),
+        );
     }
 
-    public function createScheduleContainerBuilder(): ScheduleContainerBuilderInterface
+    public function createToggleSchedulerJobForm(): FormInterface
     {
-        return new ScheduleContainerBuilder($this->getSchedulerHandlerProviderPlugins());
+        return $this->getFormFactory()->create(ToggleSchedulerJobForm::class);
     }
 
-    /**
-     * @return array<\Spryker\Shared\SymfonySchedulerExtension\Dependency\Plugin\SchedulerHandlerProviderPluginInterface>
-     */
-    public function getSchedulerHandlerProviderPlugins(): array
+    public function getSymfonySchedulerClient(): SymfonySchedulerClientInterface
     {
-        return $this->getProvidedDependency(SymfonySchedulerDependencyProvider::PLUGINS_SCHEDULER_HANDLER_PROVIDER);
-    }
-
-    public function createCommandHandler(): CommandHandler
-    {
-        return new CommandHandler();
-    }
-
-    public function createCommandMessage(): CommandMessageInterface
-    {
-        return new CommandMessage();
-    }
-
-    public function createSchedulerCronJobsBuilder(): CronJobsBuilderInterface
-    {
-        return new ConfigBasedCronJobsBuilder($this->getConfig(), $this->createCommandMessage(), $this->getLockFacade());
-    }
-
-    public function getLockFacade(): LockFacadeInterface
-    {
-        return $this->getProvidedDependency(SymfonySchedulerDependencyProvider::FACADE_LOCK);
+        return $this->getProvidedDependency(SymfonySchedulerDependencyProvider::CLIENT_SYMFONY_SCHEDULER);
     }
 }

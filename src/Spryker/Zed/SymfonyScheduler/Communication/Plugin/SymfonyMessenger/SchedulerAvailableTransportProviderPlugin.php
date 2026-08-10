@@ -7,37 +7,11 @@
 
 namespace Spryker\Zed\SymfonyScheduler\Communication\Plugin\SymfonyMessenger;
 
-use Spryker\Shared\SymfonyMessengerExtension\Dependency\Plugin\AvailableTransportProviderPluginInterface;
-use Spryker\Zed\Kernel\Communication\AbstractPlugin;
+use Spryker\Client\SymfonyScheduler\Plugin\SymfonyMessenger\SchedulerAvailableTransportProviderPlugin as ClientSchedulerAvailableTransportProviderPlugin;
 
 /**
- * @method \Spryker\Zed\SymfonyScheduler\Business\SymfonySchedulerFacadeInterface getFacade()
- * @method \Spryker\Zed\SymfonyScheduler\Communication\SymfonySchedulerCommunicationFactory getFactory()
- * @method \Spryker\Zed\SymfonyScheduler\SymfonySchedulerConfig getConfig()
+ * @deprecated Use {@link \Spryker\Client\SymfonyScheduler\Plugin\SymfonyMessenger\SchedulerAvailableTransportConfigProviderPlugin} instead.
  */
-class SchedulerAvailableTransportProviderPlugin extends AbstractPlugin implements AvailableTransportProviderPluginInterface
+class SchedulerAvailableTransportProviderPlugin extends ClientSchedulerAvailableTransportProviderPlugin
 {
-    /**
-     * {@inheritDoc}
-     * - Compiles transport DSN mappings from all registered SchedulerHandlerProviderPluginInterface implementations.
-     * - Returns a merged array of all transport names to DSN mappings from all scheduler handler providers.
-     * - Allows scheduler-based transports to be automatically registered with Symfony Messenger.
-     *
-     * @api
-     *
-     * @return array<string, string>
-     */
-    public function getTransportDSNByTransportName(): array
-    {
-        $transportMappings = [];
-
-        foreach ($this->getFactory()->getSchedulerHandlerProviderPlugins() as $plugin) {
-            $scheduleNames = array_keys($plugin->getSchedules());
-            foreach ($scheduleNames as $scheduleName) {
-                $transportMappings[$scheduleName] = sprintf('schedule://%s', $scheduleName);
-            }
-        }
-
-        return $transportMappings;
-    }
 }
