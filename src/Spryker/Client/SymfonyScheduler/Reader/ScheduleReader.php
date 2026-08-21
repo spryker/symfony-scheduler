@@ -50,7 +50,6 @@ class ScheduleReader implements ScheduleReaderInterface
             foreach ($schedules as $scheduleName => $schedule) {
                 $reflection = new ReflectionClass($schedule);
                 $messagesProperty = $reflection->getProperty('messages');
-                $messagesProperty->setAccessible(true);
                 $messages = $messagesProperty->getValue($schedule);
 
                 foreach ($messages as $recurringMessage) {
@@ -138,7 +137,6 @@ class ScheduleReader implements ScheduleReaderInterface
 
             if ($reflection->hasProperty('command')) {
                 $commandProperty = $reflection->getProperty('command');
-                $commandProperty->setAccessible(true);
                 $command = $commandProperty->getValue($message);
 
                 if (is_string($command)) {
