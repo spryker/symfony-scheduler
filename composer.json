@@ -18,7 +18,7 @@
         "spryker/symfony-scheduler-extension": "^1.0.0",
         "spryker/transfer": "^3.27.0",
         "spryker/util-text": "^1.1.0",
-        "symfony/scheduler": "^6.4.0"
+        "symfony/scheduler": "^6.4.0 || ^7.4.0"
     },
     "require-dev": {
         "spryker/code-sniffer": "*",
