@@ -17,6 +17,14 @@ class SymfonySchedulerConfig extends AbstractSharedConfig
     public const string STATUS_WAITING = 'Waiting';
 
     /**
+     * Set by the trigger tier once a job has been handed to the asynchronous execution queue, and
+     * replaced by STATUS_RUNNING as soon as an executor picks it up.
+     *
+     * @api
+     */
+    public const string STATUS_QUEUED = 'Queued';
+
+    /**
      * @api
      */
     public const string STATUS_RUNNING = 'Running';
@@ -38,6 +46,15 @@ class SymfonySchedulerConfig extends AbstractSharedConfig
      * @api
      */
     public const string STATUS_DISABLED = 'Disabled';
+
+    /**
+     * DSN scheme claimed by {@link \Spryker\Client\SymfonyScheduler\Transport\Amqp\SchedulerJobTransportFactory}.
+     * A scheme of its own is required rather than tidy: Symfony picks the first transport factory whose
+     * supports() matches, and the built-in AMQP factory is registered ahead of the plugin-provided ones.
+     *
+     * @api
+     */
+    public const string JOB_TRANSPORT_DSN_SCHEME = 'scheduler-amqp://';
 
     /**
      * @api

@@ -8,8 +8,10 @@
 namespace Spryker\Client\SymfonyScheduler\Builder;
 
 use Generated\Shared\Transfer\MessengerTransportConfigTransfer;
-use Spryker\Client\Lock\LockClientInterface;
+use Spryker\Client\SymfonyScheduler\Cache\ScheduleStateCacheProviderInterface;
+use Spryker\Client\SymfonyScheduler\Lock\ScheduleLockProviderInterface;
 use Spryker\Client\SymfonyScheduler\Message\CommandMessageInterface;
+use Spryker\Client\SymfonyScheduler\Reader\CronJobConfigReaderInterface;
 use Spryker\Client\SymfonyScheduler\Reader\JobRunRequestReaderInterface;
 use Spryker\Client\SymfonyScheduler\SymfonySchedulerConfig;
 use Spryker\Client\SymfonyScheduler\Trigger\RunRequestAwareCronTrigger;
@@ -30,8 +32,10 @@ class ConfigBasedCronJobsBuilder implements CronJobsBuilderInterface
     public function __construct(
         protected SymfonySchedulerConfig $config,
         protected CommandMessageInterface $commandMessage,
-        protected LockClientInterface $lockClient,
-        protected JobRunRequestReaderInterface $jobRunRequestReader
+        protected ScheduleLockProviderInterface $scheduleLockProvider,
+        protected JobRunRequestReaderInterface $jobRunRequestReader,
+        protected ScheduleStateCacheProviderInterface $scheduleStateCacheProvider,
+        protected CronJobConfigReaderInterface $cronJobConfigReader
     ) {
     }
 
@@ -49,15 +53,18 @@ class ConfigBasedCronJobsBuilder implements CronJobsBuilderInterface
             $message = $message->setCommand($this->buildCommand($cronJob));
             $message->setName($key);
 
-            // Reuse RecurringMessage::cron() to build the cron trigger (preserving hashed-expression and timezone
-            // handling), then wrap it so a Redis "run request" can pre-empt the schedule and fire the job now.
             $cronTrigger = RecurringMessage::cron($cronJob['schedule'], $message)->getTrigger();
             $trigger = new RunRequestAwareCronTrigger($cronTrigger, $this->jobRunRequestReader, $key);
 
             $schedule = new Schedule();
             $schedule->add(RecurringMessage::trigger($trigger, $message));
-            if (!isset($cronJob['no_lock']) || $cronJob['no_lock'] === false) {
-                $schedule->lock($this->lockClient->createLock($this->generateLockKey($key), $this->config->getLockTTL()));
+
+            $scheduleStateCache = $this->scheduleStateCacheProvider->findCache();
+            if ($scheduleStateCache !== null) {
+                $schedule->stateful($scheduleStateCache);
+            }
+            if (!$this->cronJobConfigReader->isLockDisabled($key)) {
+                $schedule->lock($this->scheduleLockProvider->createScheduleLock($key));
             }
 
             static::$schedules[$key] = $schedule;
@@ -90,10 +97,5 @@ class ConfigBasedCronJobsBuilder implements CronJobsBuilderInterface
         $store = isset($cronJob['store']) ? ' export APPLICATION_STORE=' . $cronJob['store'] : '';
 
         return sprintf('%s%s %s', $store, $region, $cronJob['command']);
-    }
-
-    protected function generateLockKey(string $cronJobKey): string
-    {
-        return sprintf('schedule_lock:%s', $cronJobKey);
     }
 }

@@ -85,6 +85,7 @@ class SchedulerJobTable extends AbstractTable
      * @var array<string, string>
      */
     protected const array STATUS_LABEL_CLASSES = [
+        SymfonySchedulerConfig::STATUS_QUEUED => 'label-warning',
         SymfonySchedulerConfig::STATUS_RUNNING => 'label-info',
         SymfonySchedulerConfig::STATUS_SUCCESS => 'label-primary',
         SymfonySchedulerConfig::STATUS_ERROR => 'label-danger',
@@ -96,6 +97,7 @@ class SchedulerJobTable extends AbstractTable
      * @var array<string, string>
      */
     protected const array STATUS_ICONS = [
+        SymfonySchedulerConfig::STATUS_QUEUED => 'hourglass_top',
         SymfonySchedulerConfig::STATUS_RUNNING => 'sync',
         SymfonySchedulerConfig::STATUS_SUCCESS => 'check_circle',
         SymfonySchedulerConfig::STATUS_ERROR => 'error',

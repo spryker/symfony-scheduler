@@ -83,4 +83,54 @@ interface SymfonySchedulerConstants
      * @api
      */
     public const string SYMFONY_SCHEDULER_REDIS_PERSISTENT_CONNECTION = 'SYMFONY_SCHEDULER:SYMFONY_SCHEDULER_REDIS_PERSISTENT_CONNECTION';
+
+    /**
+     * Specification:
+     * - Complete AMQP DSN for the scheduler job queue.
+     * - Takes precedence over the individual connection keys below and is the way to point the
+     *   scheduler at a broker that the individual keys cannot express.
+     *
+     * @api
+     */
+    public const string SYMFONY_SCHEDULER_AMQP_DSN = 'SYMFONY_SCHEDULER:SYMFONY_SCHEDULER_AMQP_DSN';
+
+    /**
+     * Specification:
+     * - Host of the AMQP broker the scheduler publishes and consumes its job queue on.
+     *
+     * @api
+     */
+    public const string SYMFONY_SCHEDULER_AMQP_HOST = 'SYMFONY_SCHEDULER:SYMFONY_SCHEDULER_AMQP_HOST';
+
+    /**
+     * Specification:
+     * - Port of the AMQP broker.
+     *
+     * @api
+     */
+    public const string SYMFONY_SCHEDULER_AMQP_PORT = 'SYMFONY_SCHEDULER:SYMFONY_SCHEDULER_AMQP_PORT';
+
+    /**
+     * Specification:
+     * - Username used to authenticate against the AMQP broker.
+     *
+     * @api
+     */
+    public const string SYMFONY_SCHEDULER_AMQP_USERNAME = 'SYMFONY_SCHEDULER:SYMFONY_SCHEDULER_AMQP_USERNAME';
+
+    /**
+     * Specification:
+     * - Password used to authenticate against the AMQP broker.
+     *
+     * @api
+     */
+    public const string SYMFONY_SCHEDULER_AMQP_PASSWORD = 'SYMFONY_SCHEDULER:SYMFONY_SCHEDULER_AMQP_PASSWORD';
+
+    /**
+     * Specification:
+     * - Virtual host on the AMQP broker.
+     *
+     * @api
+     */
+    public const string SYMFONY_SCHEDULER_AMQP_VIRTUAL_HOST = 'SYMFONY_SCHEDULER:SYMFONY_SCHEDULER_AMQP_VIRTUAL_HOST';
 }

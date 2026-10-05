@@ -13,12 +13,23 @@ use Spryker\Shared\SymfonySchedulerExtension\Dependency\Plugin\SchedulerHandlerP
 use Spryker\Shared\SymfonySchedulerExtension\Dependency\Plugin\SchedulerTransportInfoProviderPluginInterface;
 
 /**
+ * @deprecated Use {@link \Spryker\Client\SymfonyScheduler\Plugin\SymfonyScheduler\AsyncCompiledCronTransportsHandlerProviderPlugin}
+ *   instead, which hands each due job to a queue rather than running it in the polling loop, so a
+ *   long job cannot hold up the jobs behind it.
+ *
+ *   Switching requires the execution tier to be in place: the queue registered through
+ *   {@link \Spryker\Client\SymfonyScheduler\Plugin\SymfonyMessenger\AsyncSchedulerJobTransportFactoryProviderPlugin}
+ *   and {@link \Spryker\Client\SymfonyScheduler\Plugin\SymfonyMessenger\AsyncSchedulerJobTransportConfigProviderPlugin},
+ *   the routing from {@link \Spryker\Client\SymfonyScheduler\Plugin\SymfonyMessenger\AsyncSchedulerJobMessageMappingProviderPlugin},
+ *   and a worker consuming that queue. Until those exist this plugin remains the working option.
+ *
  * @method \Spryker\Client\SymfonyScheduler\SymfonySchedulerFactory getFactory()
  */
 class CompiledCronTransportsHandlerProviderPlugin extends AbstractPlugin implements SchedulerHandlerProviderPluginInterface, SchedulerTransportInfoProviderPluginInterface
 {
     /**
      * {@inheritDoc}
+     * - Runs a due job in the polling loop itself, which blocks that loop until the job finishes.
      *
      * @api
      *

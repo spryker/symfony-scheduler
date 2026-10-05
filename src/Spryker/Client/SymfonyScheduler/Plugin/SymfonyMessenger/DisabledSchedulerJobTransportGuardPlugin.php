@@ -11,6 +11,13 @@ use Spryker\Client\Kernel\AbstractPlugin;
 use Spryker\Shared\SymfonyMessengerExtension\Dependency\Plugin\TransportConsumeGuardPluginInterface;
 
 /**
+ * @deprecated Will be removed without replacement. Pausing a scheduled job's transport stops its
+ *   generator from running, which freezes the stored schedule checkpoint, so re-enabling the job
+ *   replays every occurrence from the whole disabled period. The disabled state is applied by
+ *   {@link \Spryker\Client\SymfonyScheduler\MessageHandler\EnqueueingCommandHandler} instead, which
+ *   lets the schedule keep advancing, and re-checked by
+ *   {@link \Spryker\Client\SymfonyScheduler\MessageHandler\LockingCommandHandler} for jobs already queued.
+ *
  * @method \Spryker\Client\SymfonyScheduler\SymfonySchedulerFactory getFactory()
  */
 class DisabledSchedulerJobTransportGuardPlugin extends AbstractPlugin implements TransportConsumeGuardPluginInterface

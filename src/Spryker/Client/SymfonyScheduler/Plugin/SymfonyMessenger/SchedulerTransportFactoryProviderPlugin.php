@@ -17,7 +17,7 @@ class SchedulerTransportFactoryProviderPlugin extends AbstractPlugin implements 
 {
     /**
      * {@inheritDoc}
-     * - Returns SchedulerTransportFactory instance to be used by Symfony Messenger.
+     * - Returns the transport factory backing the schedule:// transports the trigger tier polls.
      *
      * @api
      *

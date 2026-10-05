@@ -7,11 +7,19 @@
 
 namespace Spryker\Zed\SymfonyScheduler;
 
+use Spryker\Shared\SymfonyScheduler\SymfonySchedulerConfig as SharedSymfonySchedulerConfig;
 use Spryker\Zed\Kernel\AbstractBundleConfig;
 
 class SymfonySchedulerConfig extends AbstractBundleConfig
 {
     public const string STATUS_WAITING = 'Waiting';
+
+    /**
+     * Written by the trigger tier once a job has been handed to the execution queue, and replaced by
+     * STATUS_RUNNING as soon as an executor picks it up. Mirrors the shared constant rather than
+     * repeating its value, which the statuses above predate.
+     */
+    public const string STATUS_QUEUED = SharedSymfonySchedulerConfig::STATUS_QUEUED;
 
     public const string STATUS_RUNNING = 'Running';
 

@@ -11,19 +11,28 @@ use Psr\Container\ContainerInterface;
 use Spryker\Client\Kernel\AbstractFactory;
 use Spryker\Client\Lock\LockClientInterface;
 use Spryker\Client\Redis\RedisClientInterface;
+use Spryker\Client\SymfonyScheduler\Builder\AsyncJobTransportConfigBuilder;
 use Spryker\Client\SymfonyScheduler\Builder\ConfigBasedCronJobsBuilder;
 use Spryker\Client\SymfonyScheduler\Builder\CronJobsBuilderInterface;
 use Spryker\Client\SymfonyScheduler\Builder\ScheduleContainerBuilder;
 use Spryker\Client\SymfonyScheduler\Builder\ScheduleContainerBuilderInterface;
 use Spryker\Client\SymfonyScheduler\Builder\TransportConfigBuilder;
 use Spryker\Client\SymfonyScheduler\Builder\TransportConfigBuilderInterface;
+use Spryker\Client\SymfonyScheduler\Cache\ScheduleStateCacheProvider;
+use Spryker\Client\SymfonyScheduler\Cache\ScheduleStateCacheProviderInterface;
 use Spryker\Client\SymfonyScheduler\Guard\SchedulerTransportConsumeGuard;
 use Spryker\Client\SymfonyScheduler\Guard\SchedulerTransportConsumeGuardInterface;
+use Spryker\Client\SymfonyScheduler\Lock\ScheduleLockProvider;
+use Spryker\Client\SymfonyScheduler\Lock\ScheduleLockProviderInterface;
 use Spryker\Client\SymfonyScheduler\Mapper\JobStatusMapper;
 use Spryker\Client\SymfonyScheduler\Mapper\JobStatusMapperInterface;
 use Spryker\Client\SymfonyScheduler\Message\CommandMessage;
 use Spryker\Client\SymfonyScheduler\Message\CommandMessageInterface;
 use Spryker\Client\SymfonyScheduler\MessageHandler\CommandHandler;
+use Spryker\Client\SymfonyScheduler\MessageHandler\EnqueueingCommandHandler;
+use Spryker\Client\SymfonyScheduler\MessageHandler\LockingCommandHandler;
+use Spryker\Client\SymfonyScheduler\Reader\CronJobConfigReader;
+use Spryker\Client\SymfonyScheduler\Reader\CronJobConfigReaderInterface;
 use Spryker\Client\SymfonyScheduler\Reader\JobRunRequestReader;
 use Spryker\Client\SymfonyScheduler\Reader\JobRunRequestReaderInterface;
 use Spryker\Client\SymfonyScheduler\Reader\JobStateReader;
@@ -34,6 +43,9 @@ use Spryker\Client\SymfonyScheduler\Reader\ScheduleReader;
 use Spryker\Client\SymfonyScheduler\Reader\ScheduleReaderInterface;
 use Spryker\Client\SymfonyScheduler\Redis\SymfonySchedulerRedisWrapper;
 use Spryker\Client\SymfonyScheduler\Redis\SymfonySchedulerRedisWrapperInterface;
+use Spryker\Client\SymfonyScheduler\Sender\SchedulerJobSender;
+use Spryker\Client\SymfonyScheduler\Sender\SchedulerJobSenderInterface;
+use Spryker\Client\SymfonyScheduler\Transport\Amqp\SchedulerJobTransportFactory;
 use Spryker\Client\SymfonyScheduler\Transport\RunRequestAwareSchedulerTransportFactory;
 use Spryker\Client\SymfonyScheduler\Writer\JobRunRequestWriter;
 use Spryker\Client\SymfonyScheduler\Writer\JobRunRequestWriterInterface;
@@ -42,6 +54,7 @@ use Spryker\Client\SymfonyScheduler\Writer\JobStateWriterInterface;
 use Spryker\Client\SymfonyScheduler\Writer\JobStatusWriter;
 use Spryker\Client\SymfonyScheduler\Writer\JobStatusWriterInterface;
 use Symfony\Component\Messenger\Transport\TransportFactoryInterface;
+use Symfony\Component\Messenger\Transport\TransportInterface;
 use Symfony\Component\Scheduler\Messenger\SchedulerTransportFactory;
 
 /**
@@ -130,6 +143,59 @@ class SymfonySchedulerFactory extends AbstractFactory
         return new CommandHandler($this->createJobStatusWriter());
     }
 
+    public function createEnqueueingCommandHandler(): EnqueueingCommandHandler
+    {
+        return new EnqueueingCommandHandler(
+            $this->createSchedulerJobSender(),
+            $this->createJobStatusWriter(),
+            $this->createJobStateReader(),
+        );
+    }
+
+    /**
+     * Backs Schedule::stateful(), so the checkpoint survives a consumer restart instead of resetting
+     * to "now" in every new process.
+     */
+    public function createScheduleStateCacheProvider(): ScheduleStateCacheProviderInterface
+    {
+        return new ScheduleStateCacheProvider(
+            $this->createSymfonySchedulerRedisWrapper(),
+            $this->getConfig(),
+        );
+    }
+
+    public function createSchedulerJobSender(): SchedulerJobSenderInterface
+    {
+        return new SchedulerJobSender($this->createSchedulerJobTransport());
+    }
+
+    public function createSchedulerJobTransport(): TransportInterface
+    {
+        return $this->createSchedulerJobTransportFactory()
+            ->createSchedulerJobTransport($this->getConfig()->getJobTransportName());
+    }
+
+    public function createLockingCommandHandler(): LockingCommandHandler
+    {
+        return new LockingCommandHandler(
+            $this->createCommandHandler(),
+            $this->getLockClient(),
+            $this->createJobStateReader(),
+            $this->createCronJobConfigReader(),
+            $this->getConfig(),
+        );
+    }
+
+    public function createScheduleLockProvider(): ScheduleLockProviderInterface
+    {
+        return new ScheduleLockProvider($this->getLockClient(), $this->getConfig());
+    }
+
+    public function createCronJobConfigReader(): CronJobConfigReaderInterface
+    {
+        return new CronJobConfigReader($this->getConfig());
+    }
+
     public function createCommandMessage(): CommandMessageInterface
     {
         return new CommandMessage();
@@ -140,14 +206,21 @@ class SymfonySchedulerFactory extends AbstractFactory
         return new ConfigBasedCronJobsBuilder(
             $this->getConfig(),
             $this->createCommandMessage(),
-            $this->getLockClient(),
+            $this->createScheduleLockProvider(),
             $this->createJobRunRequestReader(),
+            $this->createScheduleStateCacheProvider(),
+            $this->createCronJobConfigReader(),
         );
     }
 
     public function createTransportConfigBuilder(): TransportConfigBuilderInterface
     {
         return new TransportConfigBuilder($this->getSchedulerHandlerProviderPlugins());
+    }
+
+    public function createAsyncJobTransportConfigBuilder(): TransportConfigBuilderInterface
+    {
+        return new AsyncJobTransportConfigBuilder($this->getConfig());
     }
 
     public function createScheduleContainerBuilder(): ScheduleContainerBuilderInterface
@@ -176,6 +249,11 @@ class SymfonySchedulerFactory extends AbstractFactory
     public function createBaseSchedulerTransportFactory(ContainerInterface $scheduleContainer): TransportFactoryInterface
     {
         return new SchedulerTransportFactory($scheduleContainer);
+    }
+
+    public function createSchedulerJobTransportFactory(): SchedulerJobTransportFactory
+    {
+        return new SchedulerJobTransportFactory($this->getConfig());
     }
 
     public function getRedisClient(): RedisClientInterface
