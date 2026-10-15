@@ -12,6 +12,7 @@ use DateTimeInterface;
 use Generated\Shared\Transfer\SchedulerJobStatusTransfer;
 use Monolog\Logger;
 use Spryker\Client\SymfonyScheduler\Message\CommandMessageInterface;
+use Spryker\Client\SymfonyScheduler\Reader\JobStateReaderInterface;
 use Spryker\Client\SymfonyScheduler\Writer\JobStatusWriterInterface;
 use Spryker\Shared\Log\LoggerTrait;
 use Spryker\Shared\SymfonyScheduler\SymfonySchedulerConfig;
@@ -63,12 +64,20 @@ class CommandHandler
      */
     protected array $output = [];
 
-    public function __construct(protected JobStatusWriterInterface $jobStatusWriter)
-    {
+    public function __construct(
+        protected JobStatusWriterInterface $jobStatusWriter,
+        protected JobStateReaderInterface $jobStateReader
+    ) {
     }
 
     public function __invoke(CommandMessageInterface $commandMessage): ?string
     {
+        // The disabled state is applied here rather than by pausing the job's transport, so the schedule
+        // keeps advancing its checkpoint and re-enabling the job does not replay the disabled period.
+        if ($this->jobStateReader->isJobDisabled((string)$commandMessage->getName())) {
+            return null;
+        }
+
         $startedAt = new DateTimeImmutable();
         $schedulerJobStatusTransfer = $this->createRunningJobStatusTransfer($commandMessage, $startedAt);
         $this->jobStatusWriter->saveJobStatus($schedulerJobStatusTransfer);

@@ -17,14 +17,26 @@ class CronJobConfigReader implements CronJobConfigReaderInterface
 {
     protected const string CRON_JOB_NO_LOCK_KEY = 'no_lock';
 
+    protected const string CRON_JOB_SYNC_KEY = 'sync';
+
     public function __construct(protected SymfonySchedulerConfig $symfonySchedulerConfig)
     {
     }
 
     public function isLockDisabled(string $name): bool
     {
+        return $this->isFlagEnabled($name, static::CRON_JOB_NO_LOCK_KEY);
+    }
+
+    public function isSyncExecutionEnabled(string $name): bool
+    {
+        return $this->isFlagEnabled($name, static::CRON_JOB_SYNC_KEY);
+    }
+
+    protected function isFlagEnabled(string $name, string $key): bool
+    {
         $cronJob = $this->symfonySchedulerConfig->getCronJobs()[$name] ?? [];
 
-        return ($cronJob[static::CRON_JOB_NO_LOCK_KEY] ?? false) === true;
+        return ($cronJob[$key] ?? false) === true;
     }
 }

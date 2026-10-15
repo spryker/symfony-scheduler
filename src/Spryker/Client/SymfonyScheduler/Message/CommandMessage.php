@@ -7,45 +7,9 @@
 
 namespace Spryker\Client\SymfonyScheduler\Message;
 
-use RuntimeException;
-
-class CommandMessage implements CommandMessageInterface
+/**
+ * Carries a cron job that is handed to the execution queue instead of being run by the polling loop.
+ */
+class CommandMessage extends AbstractCommandMessage
 {
-    protected ?string $command;
-
-    protected ?string $name = null;
-
-    public function getCommand(): string
-    {
-        if (!$this->command) {
-            throw new RuntimeException('Command is not set.');
-        }
-
-        return $this->command;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setCommand(string $command)
-    {
-        $this->command = $command;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return $this
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
 }

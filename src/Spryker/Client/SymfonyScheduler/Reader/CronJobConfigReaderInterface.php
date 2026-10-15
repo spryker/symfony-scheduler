@@ -10,4 +10,9 @@ namespace Spryker\Client\SymfonyScheduler\Reader;
 interface CronJobConfigReaderInterface
 {
     public function isLockDisabled(string $name): bool;
+
+    /**
+     * Tells whether the job runs inside the polling loop instead of being handed to the execution queue.
+     */
+    public function isSyncExecutionEnabled(string $name): bool;
 }

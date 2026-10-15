@@ -35,7 +35,8 @@ class ConfigBasedCronJobsBuilder implements CronJobsBuilderInterface
         protected ScheduleLockProviderInterface $scheduleLockProvider,
         protected JobRunRequestReaderInterface $jobRunRequestReader,
         protected ScheduleStateCacheProviderInterface $scheduleStateCacheProvider,
-        protected CronJobConfigReaderInterface $cronJobConfigReader
+        protected CronJobConfigReaderInterface $cronJobConfigReader,
+        protected CommandMessageInterface $syncCommandMessage
     ) {
     }
 
@@ -49,7 +50,7 @@ class ConfigBasedCronJobsBuilder implements CronJobsBuilderInterface
         }
 
         foreach ($this->config->getCronJobs() as $key => $cronJob) {
-            $message = clone $this->commandMessage;
+            $message = clone $this->resolveMessagePrototype($key);
             $message = $message->setCommand($this->buildCommand($cronJob));
             $message->setName($key);
 
@@ -71,6 +72,17 @@ class ConfigBasedCronJobsBuilder implements CronJobsBuilderInterface
         }
 
         return static::$schedules;
+    }
+
+    /**
+     * The handler map is keyed by message class, so the class chosen here is what decides whether the
+     * job is executed in the polling loop or handed to the execution queue.
+     */
+    protected function resolveMessagePrototype(string $name): CommandMessageInterface
+    {
+        return $this->cronJobConfigReader->isSyncExecutionEnabled($name)
+            ? $this->syncCommandMessage
+            : $this->commandMessage;
     }
 
     /**

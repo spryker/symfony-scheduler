@@ -28,6 +28,7 @@ use Spryker\Client\SymfonyScheduler\Mapper\JobStatusMapper;
 use Spryker\Client\SymfonyScheduler\Mapper\JobStatusMapperInterface;
 use Spryker\Client\SymfonyScheduler\Message\CommandMessage;
 use Spryker\Client\SymfonyScheduler\Message\CommandMessageInterface;
+use Spryker\Client\SymfonyScheduler\Message\SyncCommandMessage;
 use Spryker\Client\SymfonyScheduler\MessageHandler\CommandHandler;
 use Spryker\Client\SymfonyScheduler\MessageHandler\EnqueueingCommandHandler;
 use Spryker\Client\SymfonyScheduler\MessageHandler\LockingCommandHandler;
@@ -140,7 +141,10 @@ class SymfonySchedulerFactory extends AbstractFactory
 
     public function createCommandHandler(): CommandHandler
     {
-        return new CommandHandler($this->createJobStatusWriter());
+        return new CommandHandler(
+            $this->createJobStatusWriter(),
+            $this->createJobStateReader(),
+        );
     }
 
     public function createEnqueueingCommandHandler(): EnqueueingCommandHandler
@@ -201,6 +205,11 @@ class SymfonySchedulerFactory extends AbstractFactory
         return new CommandMessage();
     }
 
+    public function createSyncCommandMessage(): CommandMessageInterface
+    {
+        return new SyncCommandMessage();
+    }
+
     public function createSchedulerCronJobsBuilder(): CronJobsBuilderInterface
     {
         return new ConfigBasedCronJobsBuilder(
@@ -210,6 +219,7 @@ class SymfonySchedulerFactory extends AbstractFactory
             $this->createJobRunRequestReader(),
             $this->createScheduleStateCacheProvider(),
             $this->createCronJobConfigReader(),
+            $this->createSyncCommandMessage(),
         );
     }
 

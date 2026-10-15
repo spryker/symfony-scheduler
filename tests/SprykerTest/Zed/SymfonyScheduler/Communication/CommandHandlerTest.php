@@ -11,6 +11,7 @@ use Codeception\Test\Unit;
 use Generated\Shared\Transfer\SchedulerJobStatusTransfer;
 use Spryker\Client\SymfonyScheduler\Message\CommandMessage;
 use Spryker\Client\SymfonyScheduler\MessageHandler\CommandHandler;
+use Spryker\Client\SymfonyScheduler\Reader\JobStateReaderInterface;
 use Spryker\Client\SymfonyScheduler\Writer\JobStatusWriterInterface;
 use Spryker\Shared\SymfonyScheduler\SymfonySchedulerConfig;
 
@@ -63,12 +64,28 @@ class CommandHandlerTest extends Unit
         $this->assertNotNull($savedTransfers[1]->getFinishedAt());
     }
 
+    public function testInvokeSkipsExecutionWhenJobIsDisabled(): void
+    {
+        // Arrange
+        $markerPath = tempnam(sys_get_temp_dir(), 'scheduler-sync-disabled-');
+        $this->assertNotFalse($markerPath);
+        unlink($markerPath);
+
+        // Act
+        $savedTransfers = $this->runCommand(sprintf('touch %s', escapeshellarg($markerPath)), true);
+
+        // Assert
+        $this->assertSame([], $savedTransfers, 'A disabled job must not report a status.');
+        $this->assertFileDoesNotExist($markerPath, 'A disabled job must not run its command.');
+    }
+
     /**
      * @param string $command
+     * @param bool $isJobDisabled
      *
      * @return array<\Generated\Shared\Transfer\SchedulerJobStatusTransfer>
      */
-    protected function runCommand(string $command): array
+    protected function runCommand(string $command, bool $isJobDisabled = false): array
     {
         $savedTransfers = [];
 
@@ -84,7 +101,13 @@ class CommandHandlerTest extends Unit
             ->setCommand($command)
             ->setName(static::TEST_JOB_NAME);
 
-        $commandHandler = new CommandHandler($jobStatusWriterMock);
+        $jobStateReaderMock = $this->createMock(JobStateReaderInterface::class);
+        $jobStateReaderMock
+            ->method('isJobDisabled')
+            ->with(static::TEST_JOB_NAME)
+            ->willReturn($isJobDisabled);
+
+        $commandHandler = new CommandHandler($jobStatusWriterMock, $jobStateReaderMock);
         $commandHandler($commandMessage);
 
         return $savedTransfers;
