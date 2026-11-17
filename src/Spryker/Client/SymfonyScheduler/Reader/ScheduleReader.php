@@ -144,6 +144,7 @@ class ScheduleReader implements ScheduleReaderInterface
                 }
             }
         } catch (ReflectionException $e) {
+            return 'N/A';
         }
 
         return 'N/A';
